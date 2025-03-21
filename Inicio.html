@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accesorios Mario y Reparaciones</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            width: 300px; /* Ancho del ticket */
+        }
+        .caja {
+            border: 2px solid #000;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .header img {
+            width: 80px; /* Tamaño de las imágenes en el ticket */
+            height: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 5px;
+            text-align: left;
+        }
+        .total {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        label {
+            display: block;
+            margin: 5px 0;
+        }
+        input[type="text"], input[type="number"], input[type="date"] {
+            width: calc(100% - 12px);
+            padding: 5px;
+            margin-bottom: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+        textarea {
+            width: calc(100% - 12px);
+            height: 40px; /* Altura del área de descripción */
+            padding: 5px;
+            margin-bottom: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 14px;
+            resize: none; /* Deshabilitar redimensionamiento */
+        }
+        @media print {
+            button {
+                display: none; /* Ocultar botón al imprimir */
+            }
+            body {
+                width: auto; /* Ancho completo al imprimir */
+            }
+        }
+    </style>
+    <script>
+        function calcularTotal() {
+            let total = 0;
+            const filas = document.querySelectorAll("tbody tr");
+            filas.forEach(fila => {
+                const cantidad = parseFloat(fila.querySelector("input[name='cantidad']").value) || 0;
+                const precio = parseFloat(fila.querySelector("input[name='precio']").value) || 0;
+                total += cantidad * precio;
+            });
+            document.getElementById('total').value = total.toFixed(2);
+            calcularSaldo(); // Actualiza el saldo después de calcular el total
+        }
+
+        function calcularSaldo() {
+            const total = parseFloat(document.getElementById('total').value) || 0;
+            const anticipo = parseFloat(document.getElementById('anticipo').value) || 0;
+            const saldo = total - anticipo;
+            document.getElementById('saldo').innerText = 'Saldo Restante: ' + saldo.toFixed(2);
+        }
+
+        function establecerFechaHora() {
+            const ahora = new Date();
+            const fecha = ahora.toISOString().slice(0, 10); // Formato YYYY-MM-DD
+            document.getElementById('fecha').value = fecha;
+        }
+
+        function imprimirNota() {
+            window.print();
+        }
+    </script>
+</head>
+<body onload="establecerFechaHora()">
+    <div class="caja">
+        <div class="header">
+            <img src="android.jpg" alt="Imagen 1">
+            <img src="ip.jpg" alt="Imagen 2">
+        </div>
+        <h1 style="font-size: 18px; text-align: center;">Accesorios Mario y Reparaciones</h1>
+        <div>
+            <label>Nombre:</label>
+            <input type="text" id="nombre">
+            <label>Dirección:</label>
+            <input type="text" id="direccion">
+            <label>Fecha:</label>
+            <input type="date" id="fecha">
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Cantidad</th>
+                    <th>Descripción</th>
+                    <th>Precio</th>
+                </tr>
+                <tr>
+                    <th>Cantidad</th>
+                    <th>Descripción</th>
+                    <th>Precio</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="number" name="cantidad" value="1" onchange="calcularTotal()"></td>
+                    <td><textarea name="descripcion" placeholder="Descripción" onchange="calcularTotal()"></textarea></td>
+                    <td><input type="number" name="precio" value="0" onchange="calcularTotal()"></td>
+                </tr>
+                <tr>
+                    <td><input type="number" name="cantidad" value="1" onchange="calcularTotal()"></td>
+                    <td><textarea name="descripcion" placeholder="Descripción" onchange="calcularTotal()"></textarea></td>
+                    <td><input type="number" name="precio" value="0" onchange="calcularTotal()"></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="total">
+            <label>Total:</label>
+            <input type="number" id="total" value="0" readonly>
+            <label>Anticipo:</label>
+            <input type="number" id="anticipo" value="0" oninput="calcularSaldo()">
+            <span id="saldo">Saldo Restante: 0.00</span>
+        </div>
+        <button onclick="imprimirNota()">Imprimir</button>
+    </div>
+</body>
+</html>
+
